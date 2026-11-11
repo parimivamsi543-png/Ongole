@@ -1,20 +1,26 @@
 {
   "name": "ledgerline",
   "version": "1.0.0",
+  "private": true,
   "description": "LedgerLine – Secure, Double-Entry Financial Ledger System",
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "scripts": {
-    "install:all": "npm install --prefix server && npm install --prefix client --include=dev",
-    "build": "npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client",
+    "install:all": "npm install",
+    "postinstall": "node scripts/ensure-build.js",
+    "build": "npm install && npm run build --workspace=client",
+    "prestart": "node scripts/ensure-build.js",
     "start": "node server/src/server.js",
     "dev": "node scripts/dev.js",
-    "dev:server": "npm run dev --prefix server",
-    "dev:client": "npm run dev --prefix client",
-    "seed": "npm run seed --prefix server",
-    "verify": "npm run verify --prefix server",
-    "test": "npm test --prefix server"
+    "dev:server": "npm run dev --workspace=server",
+    "dev:client": "npm run dev --workspace=client",
+    "seed": "npm run seed --workspace=server",
+    "verify": "npm run verify --workspace=server",
+    "test": "npm test --workspace=server"
   },
   "engines": {
     "node": ">=20.0.0"
   }
 }
-

@@ -125,10 +125,13 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
-  connectDB().then(() => {
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`[LedgerLine] Server running in ${process.env.NODE_ENV || 'development'} mode on http://localhost:${PORT}`);
-    });
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[LedgerLine] Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+  });
+
+  connectDB().catch((err) => {
+    console.error('[LedgerLine] Exhausted MongoDB connection retries:', err.message);
+    process.exit(1);
   });
 }
 

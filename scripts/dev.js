@@ -5,13 +5,13 @@ const rootDir = path.resolve(__dirname, '..');
 const isWin = process.platform === 'win32';
 const npmCmd = isWin ? 'npm.cmd' : 'npm';
 
-const serverProc = spawn(npmCmd, ['run', 'dev', '--prefix', 'server'], {
+const serverProc = spawn(npmCmd, ['run', 'dev', '--workspace=server'], {
   cwd: rootDir,
   stdio: 'inherit',
   shell: isWin,
 });
 
-const clientProc = spawn(npmCmd, ['run', 'dev', '--prefix', 'client'], {
+const clientProc = spawn(npmCmd, ['run', 'dev', '--workspace=client'], {
   cwd: rootDir,
   stdio: 'inherit',
   shell: isWin,
@@ -25,4 +25,3 @@ const shutdown = () => {
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
-
