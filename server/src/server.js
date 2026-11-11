@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 
 const connectDB = require('./config/db');
+const { ensureBootstrapData } = require('./services/bootstrapService');
 const { logAudit } = require('./services/auditService');
 
 const authRoutes = require('./routes/authRoutes');
@@ -129,10 +130,12 @@ if (require.main === module) {
     console.log(`[LedgerLine] Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
 
-  connectDB().catch((err) => {
-    console.error('[LedgerLine] Exhausted MongoDB connection retries:', err.message);
-    process.exit(1);
-  });
+  connectDB()
+    .then(() => ensureBootstrapData())
+    .catch((err) => {
+      console.error('[LedgerLine] Exhausted MongoDB connection retries:', err.message);
+      process.exit(1);
+    });
 }
 
 module.exports = { app };
