@@ -8,16 +8,31 @@ const request = async (path, options = {}) => {
     ...(options.headers || {}),
   };
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-  });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error('Cannot reach LedgerLine API server. Start it with "npm start" or "npm run dev".');
+  }
 
-  const data = await res.json().catch(() => ({}));
+  const text = await res.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = {};
+  }
   const isReplay = res.headers.get('idempotent-replay') === 'true';
 
   if (!res.ok) {
-    const err = new Error(data.reason || data.message || data.error || 'Request failed');
+    const fallback =
+      res.status >= 500 && Object.keys(data).length === 0
+        ? `API server unreachable on port 5000 (HTTP ${res.status}). Run "npm start" or "npm run dev".`
+        : `Request failed (HTTP ${res.status})`;
+    const err = new Error(data.reason || data.message || data.error || fallback);
     err.status = res.status;
     err.code = data.error;
     err.data = data;
@@ -150,3 +165,4 @@ export const api = {
       }),
   },
 };
+

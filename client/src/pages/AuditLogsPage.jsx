@@ -10,6 +10,7 @@ import {
   ScrollText,
 } from 'lucide-react';
 import { api } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const AuditLogsPage = ({ addToast }) => {
   const [subTab, setSubTab] = useState('LOGS'); // 'LOGS' | 'CHAIN'
@@ -51,7 +52,7 @@ export const AuditLogsPage = ({ addToast }) => {
         addToast(
           'success',
           'Cryptographic Integrity Verified',
-          `${data.integrity.totalLedgerEntries} entries verified. Debits == Credits ($${data.integrity.totalDebits.toFixed(2)}).`
+          `${data.integrity.totalLedgerEntries} entries verified. Debits == Credits (${formatINR(data.integrity.totalDebits)}).`
         );
       } else {
         addToast('error', 'INTEGRITY VIOLATION DETECTED', `${data.integrity.discrepancies.length} discrepancy(s) found!`);
@@ -122,7 +123,7 @@ export const AuditLogsPage = ({ addToast }) => {
               <div className="px-3 py-2 rounded-xl bg-navy-950/80 border border-slate-800">
                 <p className="text-[10px] uppercase tracking-wider text-slate-400">Debits == Credits</p>
                 <p className={`text-xs font-bold mt-0.5 ${integrity.isDoubleEntryBalanced ? 'text-brand-400' : 'text-rose-400'}`}>
-                  ${integrity.totalDebits.toLocaleString()}
+                  {formatINR(integrity.totalDebits)}
                 </p>
               </div>
               <div className="px-3 py-2 rounded-xl bg-navy-950/80 border border-slate-800">
@@ -251,8 +252,8 @@ export const AuditLogsPage = ({ addToast }) => {
                   </span>
                 </div>
                 <div className="text-right font-mono">
-                  <span className="text-sm font-bold text-white">${entry.amount.toFixed(2)}</span>
-                  <span className="text-xs text-slate-400 ml-3">Bal After: ${entry.balanceAfter.toFixed(2)}</span>
+                  <span className="text-sm font-bold text-white">{formatINR(entry.amount)}</span>
+                  <span className="text-xs text-slate-400 ml-3">Bal After: {formatINR(entry.balanceAfter)}</span>
                 </div>
               </div>
               <div className="pt-2 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] font-mono">
@@ -272,3 +273,4 @@ export const AuditLogsPage = ({ addToast }) => {
     </div>
   );
 };
+

@@ -211,7 +211,7 @@ const updateOverdraftLimit = async (req, res) => {
       targetResource: 'ACCOUNT',
       targetId: account._id.toString(),
       outcome: 'SUCCESS',
-      reason: justification || `Overdraft limit changed from $${oldLimit} to $${numericLimit}`,
+      reason: justification || `Overdraft limit changed from ₹${oldLimit} to ₹${numericLimit}`,
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
       details: { accountNumber: account.accountNumber, oldLimit, newLimit: numericLimit },
@@ -220,7 +220,7 @@ const updateOverdraftLimit = async (req, res) => {
     res.json({
       success: true,
       account,
-      message: `Authorized overdraft limit set to $${numericLimit.toFixed(2)}`,
+      message: `Authorized overdraft limit set to ₹${numericLimit.toFixed(2)}`,
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -237,7 +237,7 @@ const runUnauthorizedTransferAttack = async (req, res) => {
         targetResource: 'ACCOUNT',
         targetId: victimAcc._id.toString(),
         outcome: 'BLOCKED',
-        reason: `Adversarial security probe blocked: ${req.user.email} (${req.user.role}) attempted unauthorized transfer of $${amount} from ${victimAcc.accountNumber}.`,
+        reason: `Adversarial security probe blocked: ${req.user.email} (${req.user.role}) attempted unauthorized transfer of ₹${amount} from ${victimAcc.accountNumber}.`,
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
       });
@@ -326,7 +326,7 @@ const runTamperSimulation = async (req, res) => {
       targetResource: 'LEDGER_ENTRY',
       targetId: sampleEntry.entryId,
       outcome: 'BLOCKED',
-      reason: `Simulated $0.01 ledger amount manipulation on sequence #${sampleEntry.sequenceNumber} caught by immutability guard & SHA-256 hash chain.`,
+      reason: `Simulated ₹0.01 ledger amount manipulation on sequence #${sampleEntry.sequenceNumber} caught by immutability guard & SHA-256 hash chain.`,
       ipAddress: req.ip,
       userAgent: req.headers['user-agent'],
     });

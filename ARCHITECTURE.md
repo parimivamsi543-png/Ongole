@@ -10,9 +10,9 @@
 LedgerLine separates financial truth from account summary state while binding them together atomically:
 
 1. **Double-Entry Source of Truth (`LedgerEntry`)**:
-   - Account balances are not arbitrary mutable counters—every dollar movement requires a balanced pair of immutable journal entries (`DEBIT` and `CREDIT`).
+   - Account balances are not arbitrary mutable counters—every rupee movement requires a balanced pair of immutable journal entries (`DEBIT` and `CREDIT`).
    - Deposits draw from institutional clearing (`SYS-CLEARING-001`) and credit the customer account; withdrawals debit the customer account and credit `SYS-CLEARING-001`; transfers debit the sender and credit the recipient.
-   - Because every posting creates an equal Debit and Credit, the total sum of balances across all accounts (Customer + System Clearing) is strictly conserved at **$0.00**.
+   - Because every posting creates an equal Debit and Credit, the total sum of balances across all accounts (Customer + System Clearing) is strictly conserved at **₹0.00**.
 
 2. **ACID Atomicity + Optimistic Concurrency Control (OCC)**:
    - Every financial transaction runs inside a MongoDB Replica Set multi-document transaction (`session.startTransaction()`).
@@ -22,7 +22,7 @@ LedgerLine separates financial truth from account summary state while binding th
 
 3. **Cryptographic Tamper-Evident Chain**:
    - Each `LedgerEntry` links to its predecessor via `previousHash` and seals its own fields (`sequenceNumber`, `entryId`, `transactionId`, `accountId`, `entryType`, `amount`, `balanceAfter`, `previousHash`, `createdAt`) using **SHA-256**.
-   - Modifying even `$0.01` directly in MongoDB breaks both the entry's SHA-256 signature and every downstream hash link, immediately caught by `verifySystemIntegrity()`.
+   - Modifying even `₹0.01` directly in MongoDB breaks both the entry's SHA-256 signature and every downstream hash link, immediately caught by `verifySystemIntegrity()`.
 
 4. **Idempotency Barrier**:
    - `handleIdempotency` intercepts mutating requests carrying `Idempotency-Key`.
@@ -130,7 +130,7 @@ Supports optional/recommended header `Idempotency-Key: <uuid>`.
 - `POST /api/adversarial/overdraft` *(ADMIN, ACCOUNT_HOLDER)* — Tests excessive withdrawal refusal.
 - `POST /api/adversarial/unauthorized-transfer` — Tests cross-account access denial & audit logging.
 - `POST /api/adversarial/tamper-check` — Runs live integrity check.
-- `POST /api/adversarial/tamper-simulate` — Simulates schema immutability block + `$0.01` hash mismatch detection non-destructively.
+- `POST /api/adversarial/tamper-simulate` — Simulates schema immutability block + `₹0.01` hash mismatch detection non-destructively.
 
 ---
 
@@ -158,3 +158,4 @@ npm run dev:client   # Terminal 2 (Vite React on :5173)
 npm run build
 npm start
 ```
+

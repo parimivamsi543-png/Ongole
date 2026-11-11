@@ -72,3 +72,4 @@ This document records key dated prompts and architectural iterations used during
   - Built `client/src/` with Tailwind CSS, Lucide icons, and Vite production build targeting `server/public`.
   - Added `dns.setDefaultResultOrder('ipv4first')` + `family: 4` resolving Windows Node 20 Atlas SRV latency (connecting in ~426ms).
   - Verified full production server (`npm run build` + `npm start`) serving both SPA and API health/login/accounts endpoints.
+

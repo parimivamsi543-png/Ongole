@@ -93,3 +93,4 @@ Expected response (`200 OK`):
   "database": "CONNECTED"
 }
 ```
+

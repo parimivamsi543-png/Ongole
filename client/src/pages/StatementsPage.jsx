@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const StatementsPage = ({ selectedAccountId, setSelectedAccountId, addToast }) => {
   const { user } = useAuth();
@@ -149,7 +150,7 @@ export const StatementsPage = ({ selectedAccountId, setSelectedAccountId, addToa
           >
             {accounts.map((acc) => (
               <option key={acc._id} value={acc._id}>
-                {acc.accountNumber} — {acc.name} (${acc.balance.toFixed(2)})
+                {acc.accountNumber} — {acc.name} ({formatINR(acc.balance)})
               </option>
             ))}
           </select>
@@ -204,7 +205,7 @@ export const StatementsPage = ({ selectedAccountId, setSelectedAccountId, addToa
               <div className="text-left sm:text-right">
                 <p className="text-[11px] uppercase tracking-wider text-slate-400">Current Settled Balance</p>
                 <p className="text-3xl font-extrabold tabular-nums-mono text-brand-300">
-                  ${statement.summary.currentBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {formatINR(statement.summary.currentBalance)}
                 </p>
               </div>
             </div>
@@ -213,13 +214,13 @@ export const StatementsPage = ({ selectedAccountId, setSelectedAccountId, addToa
               <div className="p-3.5 rounded-xl bg-navy-950/70 border border-slate-800">
                 <p className="text-[11px] text-slate-400 uppercase tracking-wider">Total Inflows</p>
                 <p className="text-lg font-bold font-mono text-brand-400 mt-1">
-                  +${statement.summary.totalInflow.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  +{formatINR(statement.summary.totalInflow)}
                 </p>
               </div>
               <div className="p-3.5 rounded-xl bg-navy-950/70 border border-slate-800">
                 <p className="text-[11px] text-slate-400 uppercase tracking-wider">Total Outflows</p>
                 <p className="text-lg font-bold font-mono text-amber-300 mt-1">
-                  -${statement.summary.totalOutflow.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  -{formatINR(statement.summary.totalOutflow)}
                 </p>
               </div>
               <div className="p-3.5 rounded-xl bg-navy-950/70 border border-slate-800">
@@ -304,10 +305,10 @@ export const StatementsPage = ({ selectedAccountId, setSelectedAccountId, addToa
                             isRefused ? 'text-rose-400 line-through' : isCredit ? 'text-brand-400' : 'text-amber-300'
                           }`}
                         >
-                          {isRefused ? '' : isCredit ? '+' : '-'}${item.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          {isRefused ? '' : isCredit ? '+' : '-'}{formatINR(item.amount)}
                         </td>
                         <td className="py-3.5 px-5 text-right font-mono font-bold text-white whitespace-nowrap">
-                          ${item.runningBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          {formatINR(item.runningBalance)}
                         </td>
                       </tr>
                     );
@@ -328,3 +329,4 @@ export const StatementsPage = ({ selectedAccountId, setSelectedAccountId, addToa
     </div>
   );
 };
+

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const AccountsPage = ({
   onOpenTransaction,
@@ -106,7 +107,7 @@ export const AccountsPage = ({
         Number(newOverdraftValue),
         overdraftJustification || 'Authorized overdraft facility adjustment'
       );
-      addToast('success', 'Overdraft Facility Updated', `Authorized limit updated to $${Number(newOverdraftValue).toFixed(2)}`);
+      addToast('success', 'Overdraft Facility Updated', `Authorized limit updated to ${formatINR(newOverdraftValue)}`);
       setOverdraftTarget(null);
       loadData();
       onAccountUpdated();
@@ -190,13 +191,13 @@ export const AccountsPage = ({
                         acc.balance < 0 ? 'text-amber-300' : 'text-white'
                       }`}
                     >
-                      ${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      {formatINR(acc.balance)}
                     </p>
                   </div>
                   <div>
                     <p className="text-[11px] text-slate-400 uppercase tracking-wider">Overdraft Facility</p>
                     <p className="text-xl font-bold tabular-nums-mono text-slate-300 mt-0.5">
-                      {acc.isSystem ? 'Institutional' : `$${(acc.overdraftLimit || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                      {acc.isSystem ? 'Institutional' : formatINR(acc.overdraftLimit || 0)}
                     </p>
                   </div>
                 </div>
@@ -273,7 +274,7 @@ export const AccountsPage = ({
           <div className="glass-card w-full max-w-md p-6 border-slate-700">
             <h3 className="text-lg font-bold text-white mb-1">Open New Financial Account</h3>
             <p className="text-xs text-slate-400 mb-5">
-              All accounts start at $0.00 to strictly obey balance conservation.
+              All accounts start at ₹0.00 to strictly obey balance conservation.
             </p>
             <form onSubmit={handleCreateAccount} className="space-y-4">
               <div>
@@ -322,7 +323,7 @@ export const AccountsPage = ({
 
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                      Authorized Overdraft Limit (USD)
+                      Authorized Overdraft Limit (INR ₹)
                     </label>
                     <input
                       type="number"
@@ -363,7 +364,7 @@ export const AccountsPage = ({
             <form onSubmit={handleSaveOverdraft} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                  Overdraft Limit (USD)
+                  Overdraft Limit (INR ₹)
                 </label>
                 <input
                   type="number"
@@ -403,3 +404,4 @@ export const AccountsPage = ({
     </div>
   );
 };
+

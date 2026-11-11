@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeftRight, CheckCircle2, XCircle, Eye, Filter, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const TransactionsPage = ({ onOpenTransaction, onInspectTransaction, refreshTrigger, addToast }) => {
   const { user } = useAuth();
@@ -132,7 +133,7 @@ export const TransactionsPage = ({ onOpenTransaction, onInspectTransaction, refr
                     </p>
                   </td>
                   <td className="py-3.5 px-4 font-mono font-bold text-white">
-                    ${tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {formatINR(tx.amount)}
                   </td>
                   <td className="py-3.5 px-4">
                     {tx.status === 'POSTED' ? (
@@ -173,3 +174,4 @@ export const TransactionsPage = ({ onOpenTransaction, onInspectTransaction, refr
     </div>
   );
 };
+

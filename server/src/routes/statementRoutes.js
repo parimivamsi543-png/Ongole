@@ -8,3 +8,4 @@ router.use(authenticateToken);
 router.get('/:accountId', generateAccountStatement);
 
 module.exports = router;
+

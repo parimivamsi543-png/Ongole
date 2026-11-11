@@ -104,7 +104,7 @@ const seedDatabase = async () => {
       ownerId: sarah._id,
       accountType: ACCOUNT_TYPES.SAVINGS,
       balance: 0,
-      overdraftLimit: 500, // Explicitly authorized $500 overdraft facility
+      overdraftLimit: 500, // Explicitly authorized ₹500 overdraft facility
       status: ACCOUNT_STATUS.ACTIVE,
     });
 
@@ -216,3 +216,4 @@ const seedDatabase = async () => {
 };
 
 seedDatabase();
+

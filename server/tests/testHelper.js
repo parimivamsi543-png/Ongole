@@ -25,11 +25,20 @@ const getTestMongoUri = () => {
 
 const setupTestEnvironment = async () => {
   if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(getTestMongoUri(), {
-      maxPoolSize: 30,
-      family: 4,
-      serverSelectionTimeoutMS: 20000,
-    });
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await mongoose.connect(getTestMongoUri(), {
+          maxPoolSize: 30,
+          family: 4,
+          serverSelectionTimeoutMS: 20000,
+          socketTimeoutMS: 45000,
+        });
+        break;
+      } catch (err) {
+        if (attempt === 3) throw err;
+        await new Promise((r) => setTimeout(r, 1000 * attempt));
+      }
+    }
   }
 
   // Ensure all unique & sparse indexes are built in test db

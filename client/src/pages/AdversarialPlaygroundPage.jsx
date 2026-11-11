@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const AdversarialPlaygroundPage = ({ onLedgerMutated, addToast }) => {
   const { user } = useAuth();
@@ -98,7 +99,7 @@ export const AdversarialPlaygroundPage = ({ onLedgerMutated, addToast }) => {
               >
                 {accounts.map((a) => (
                   <option key={a._id} value={a._id}>
-                    {a.accountNumber} (${a.balance.toFixed(2)})
+                    {a.accountNumber} ({formatINR(a.balance)})
                   </option>
                 ))}
               </select>
@@ -137,7 +138,7 @@ export const AdversarialPlaygroundPage = ({ onLedgerMutated, addToast }) => {
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase text-slate-400 mb-1">Amount / Thread ($)</label>
+                <label className="block text-[10px] uppercase text-slate-400 mb-1">Amount / Thread (₹)</label>
                 <input
                   type="number"
                   min="1"
@@ -191,7 +192,7 @@ export const AdversarialPlaygroundPage = ({ onLedgerMutated, addToast }) => {
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Fires 5 identical $15.00 deposit requests carrying the exact same <code className="text-brand-300">Idempotency-Key</code>. Verifies that only 1 ledger posting occurs and 4 replays return the original outcome.
+              Fires 5 identical ₹15.00 deposit requests carrying the exact same <code className="text-brand-300">Idempotency-Key</code>. Verifies that only 1 ledger posting occurs and 4 replays return the original outcome.
             </p>
           </div>
 
@@ -232,7 +233,7 @@ export const AdversarialPlaygroundPage = ({ onLedgerMutated, addToast }) => {
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Attempts to withdraw $50,000 above the account's available balance + authorized overdraft. Confirms deterministic refusal, untouched balance, and statement/audit logging.
+              Attempts to withdraw ₹50,000 above the account's available balance + authorized overdraft. Confirms deterministic refusal, untouched balance, and statement/audit logging.
             </p>
           </div>
 
@@ -304,7 +305,7 @@ export const AdversarialPlaygroundPage = ({ onLedgerMutated, addToast }) => {
                 5. Append-Only & SHA-256 Tamper Detection Simulation
               </span>
               <p className="text-xs text-slate-400 max-w-2xl">
-                Tests both Mongoose schema-level update guards (blocking direct <code className="text-violet-300">LedgerEntry.updateOne</code>) AND simulates a $0.01 out-of-band tampering payload to prove the SHA-256 hash chain instantly detects manipulation without altering live records.
+                Tests both Mongoose schema-level update guards (blocking direct <code className="text-violet-300">LedgerEntry.updateOne</code>) AND simulates a ₹0.01 out-of-band tampering payload to prove the SHA-256 hash chain instantly detects manipulation without altering live records.
               </p>
             </div>
             <button
@@ -340,3 +341,4 @@ const ResultViewer = ({ result }) => (
     </pre>
   </div>
 );
+

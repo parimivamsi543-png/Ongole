@@ -202,3 +202,4 @@ describe('Financial Integrity & Double-Entry Invariants', () => {
     assert.equal(integrity.isMathematicallySound, true);
   });
 });
+

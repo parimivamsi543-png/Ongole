@@ -83,3 +83,4 @@ describe('Concurrency Safety & Double-Spending Prevention', () => {
     assert.equal(integrity.isAccountBalanceReconciled, true);
   });
 });
+

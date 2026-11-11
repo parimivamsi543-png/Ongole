@@ -16,6 +16,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import { RoleBadge } from '../components/RoleBadge';
+import { formatINR } from '../utils/formatCurrency';
 
 export const DashboardPage = ({
   onOpenTransaction,
@@ -114,7 +115,7 @@ export const DashboardPage = ({
             </div>
           </div>
           <p className="text-3xl font-extrabold tabular-nums-mono text-white mt-3">
-            ${totalCustomerLiquidity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatINR(totalCustomerLiquidity)}
           </p>
           <p className="text-xs text-brand-400 mt-2 font-mono">
             Across {customerAccounts.length} active ledger account{customerAccounts.length === 1 ? '' : 's'}
@@ -133,10 +134,10 @@ export const DashboardPage = ({
           {isPrivileged && systemClearing ? (
             <>
               <p className="text-3xl font-extrabold tabular-nums-mono text-cyan-300 mt-3">
-                ${systemClearing.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                {formatINR(systemClearing.balance)}
               </p>
               <p className="text-xs text-slate-400 mt-2 font-mono">
-                Zero-Sum Net: ${(totalCustomerLiquidity + systemClearing.balance).toFixed(2)}
+                Zero-Sum Net: {formatINR(totalCustomerLiquidity + systemClearing.balance)}
               </p>
             </>
           ) : (
@@ -162,7 +163,7 @@ export const DashboardPage = ({
                 {integrity.isMathematicallySound ? '100% INTACT' : 'ALERT: TAMPER'}
               </p>
               <p className="text-xs text-slate-400 mt-2 font-mono">
-                {integrity.totalLedgerEntries} entries · Debits = Credits (${integrity.totalDebits.toLocaleString()})
+                {integrity.totalLedgerEntries} entries · Debits = Credits ({formatINR(integrity.totalDebits)})
               </p>
             </>
           ) : (
@@ -233,11 +234,11 @@ export const DashboardPage = ({
                 <div className="mt-4">
                   <p className="text-[11px] uppercase tracking-wider text-slate-400">Settled Balance</p>
                   <p className={`text-2xl font-extrabold tabular-nums-mono ${acc.balance < 0 ? 'text-amber-300' : 'text-white'}`}>
-                    ${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {formatINR(acc.balance)}
                   </p>
                   {acc.overdraftLimit > 0 && (
                     <p className="text-[11px] text-accent-cyan font-mono mt-0.5">
-                      Authorized Overdraft Facility: ${acc.overdraftLimit.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      Authorized Overdraft Facility: {formatINR(acc.overdraftLimit)}
                     </p>
                   )}
                 </div>
@@ -302,7 +303,7 @@ export const DashboardPage = ({
                     {tx.sourceAccountId?.accountNumber || 'CLEARING'} → {tx.destinationAccountId?.accountNumber || 'CLEARING'}
                   </td>
                   <td className="py-3.5 px-4 font-mono font-bold text-white">
-                    ${tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {formatINR(tx.amount)}
                   </td>
                   <td className="py-3.5 px-4">
                     {tx.status === 'POSTED' ? (
@@ -335,3 +336,4 @@ export const DashboardPage = ({
     </div>
   );
 };
+

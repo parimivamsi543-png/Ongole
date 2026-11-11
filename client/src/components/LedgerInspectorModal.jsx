@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, Scale, Link2, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
 import { api } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const LedgerInspectorModal = ({ transactionId, onClose }) => {
   const [data, setData] = useState(null);
@@ -52,7 +53,7 @@ export const LedgerInspectorModal = ({ transactionId, onClose }) => {
                 <div className="p-3.5 rounded-xl bg-navy-950/80 border border-slate-800">
                   <p className="text-[11px] text-slate-400 uppercase tracking-wider">Amount</p>
                   <p className="text-sm font-bold font-mono text-brand-300 mt-0.5">
-                    ${data.transaction.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {formatINR(data.transaction.amount)}
                   </p>
                 </div>
                 <div className="p-3.5 rounded-xl bg-navy-950/80 border border-slate-800">
@@ -130,10 +131,10 @@ export const LedgerInspectorModal = ({ transactionId, onClose }) => {
                           </div>
                           <div className="text-right">
                             <p className="text-sm font-bold font-mono text-white">
-                              ${entry.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                              {formatINR(entry.amount)}
                             </p>
                             <p className="text-[11px] font-mono text-slate-400">
-                              Balance After: ${entry.balanceAfter.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                              Balance After: {formatINR(entry.balanceAfter)}
                             </p>
                           </div>
                         </div>
@@ -160,3 +161,4 @@ export const LedgerInspectorModal = ({ transactionId, onClose }) => {
     </div>
   );
 };
+

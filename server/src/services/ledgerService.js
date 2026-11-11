@@ -44,7 +44,7 @@ const getOrCreateSystemAccount = async (accountConfig, session = null) => {
             accountNumber: accountConfig.number,
             name: accountConfig.name,
             accountType: accountConfig.type,
-            currency: 'USD',
+            currency: 'INR',
             balance: 0,
             overdraftLimit: 1000000000, // Institutional clearing facility
             status: ACCOUNT_STATUS.ACTIVE,
@@ -180,7 +180,7 @@ const attemptTransactionOnce = async ({
     // Invariant 4: Negative Balance Prevention
     const availableBalance = Math.round((sourceAcc.balance + (sourceAcc.overdraftLimit || 0)) * 100) / 100;
     if (availableBalance < roundedAmount) {
-      const refusalReason = `INSUFFICIENT_FUNDS: Available balance ($${availableBalance.toFixed(2)}) is insufficient for required amount ($${roundedAmount.toFixed(2)}) on account ${sourceAcc.accountNumber}.`;
+      const refusalReason = `INSUFFICIENT_FUNDS: Available balance (₹${availableBalance.toFixed(2)}) is insufficient for required amount (₹${roundedAmount.toFixed(2)}) on account ${sourceAcc.accountNumber}.`;
 
       await Transaction.create(
         [

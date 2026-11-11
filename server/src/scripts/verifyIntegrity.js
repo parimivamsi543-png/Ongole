@@ -13,8 +13,8 @@ const runVerification = async () => {
     console.log(`Timestamp:               ${report.timestamp}`);
     console.log(`Total Transactions:      ${report.totalTransactions}`);
     console.log(`Total Ledger Entries:    ${report.totalLedgerEntries}`);
-    console.log(`Total Debits:            $${report.totalDebits.toFixed(2)}`);
-    console.log(`Total Credits:           $${report.totalCredits.toFixed(2)}`);
+    console.log(`Total Debits:            ₹${report.totalDebits.toFixed(2)}`);
+    console.log(`Total Credits:           ₹${report.totalCredits.toFixed(2)}`);
     console.log(`Hash Chain Intact:       ${report.isHashChainIntact ? 'PASS' : 'FAIL'}`);
     console.log(`Double-Entry Balanced:   ${report.isDoubleEntryBalanced ? 'PASS' : 'FAIL'}`);
     console.log(`Balances Reconciled:     ${report.isAccountBalanceReconciled ? 'PASS' : 'FAIL'}`);
@@ -35,3 +35,4 @@ const runVerification = async () => {
 };
 
 runVerification();
+

@@ -15,12 +15,12 @@ export const ArchitectureDocPage = () => {
     },
     {
       title: '3. Balance Conservation',
-      desc: 'Deposits draw from SYS-CLEARING-001; withdrawals settle to SYS-CLEARING-001; transfers move funds atomically between customer accounts. Net sum of all balances across the universe is always $0.00.',
+      desc: 'Deposits draw from SYS-CLEARING-001; withdrawals settle to SYS-CLEARING-001; transfers move funds atomically between customer accounts. Net sum of all balances across the universe is always ₹0.00.',
       icon: Server,
     },
     {
       title: '4. Negative Balance Prevention',
-      desc: 'Enforces availableBalance = balance + overdraftLimit >= amount inside the ACID transaction. Accounts default to $0 overdraft unless explicitly configured and audited by an ADMIN.',
+      desc: 'Enforces availableBalance = balance + overdraftLimit >= amount inside the ACID transaction. Accounts default to ₹0 overdraft unless explicitly configured and audited by an ADMIN.',
       icon: Shield,
     },
     {
@@ -122,3 +122,4 @@ export const ArchitectureDocPage = () => {
     </div>
   );
 };
+

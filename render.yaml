@@ -17,3 +17,4 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 24h
+

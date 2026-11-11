@@ -8,3 +8,4 @@ router.post('/register', register);
 router.get('/me', authenticateToken, getMe);
 
 module.exports = router;
+

@@ -10,7 +10,7 @@ This walkthrough demonstrates LedgerLine's double-entry accounting, server-side 
 3. On the **Overview** dashboard:
    - Point out Alex's two accounts (`ACC-2026-10001` Primary Checking and `ACC-2026-10002` High-Yield Vault).
    - Click **Deposit** or **Transfer** to open the **Execute Ledger Transaction** modal.
-   - Transfer `$100.00` from Alex's Checking to Sarah's Checking (`ACC-2026-20001`), noting the auto-generated `Idempotency-Key` header.
+   - Transfer `₹100.00` from Alex's Checking to Sarah's Checking (`ACC-2026-20001`), noting the auto-generated `Idempotency-Key` header.
    - After posting, immediately click **Replay Same Key** inside the modal: observe the toast confirming **Idempotent Replay Intercepted**—no duplicate debit occurs!
 
 ---
@@ -20,7 +20,7 @@ This walkthrough demonstrates LedgerLine's double-entry accounting, server-side 
 2. Click the newly posted transfer row to open the **Double-Entry Journal Inspector**.
    - Show the two balanced immutable postings (`DEBIT` on Alex's account, `CREDIT` on Sarah's account), `DEBITS == CREDITS VERIFIED` badge, `sequenceNumber`, `previousHash`, and `SHA-256 Hash`.
 3. Navigate to **Statements** and select `ACC-2026-10001`.
-   - Point out that **both** `POSTED` transactions AND the seeded `REJECTED` `$95,000` overdraft attempt appear chronologically with running balances, timestamps, refusal reasons, and full actor attribution (`name`, `email`, `role`).
+   - Point out that **both** `POSTED` transactions AND the seeded `REJECTED` `₹95,000` overdraft attempt appear chronologically with running balances, timestamps, refusal reasons, and full actor attribution (`name`, `email`, `role`).
    - Show **Export CSV**, **Export JSON**, and **Print Statement** controls.
 
 ---
@@ -35,13 +35,13 @@ This walkthrough demonstrates LedgerLine's double-entry accounting, server-side 
    - Click **Attempt Unauthorized Overdraft** → blocked cleanly with `INSUFFICIENT_FUNDS`, balance untouched.
    - Click **Launch Unauthorized Transfer Probe** → blocked at server RBAC boundary (`403`) and logged to `AuditLog`.
 4. **Test 3 — Tamper Detection Simulation:**
-   - Click **Run Tamper Detection Test** → shows both Mongoose schema immutability guard (`LEDGER_IMMUTABILITY_VIOLATION`) AND `$0.01` SHA-256 hash mismatch detection.
+   - Click **Run Tamper Detection Test** → shows both Mongoose schema immutability guard (`LEDGER_IMMUTABILITY_VIOLATION`) AND `₹0.01` SHA-256 hash mismatch detection.
 
 ---
 
 ## Minute 3:15 – 4:15 | Auditor Read-Only Oversight & Cryptographic Audit
 1. Click **Sign Out** and log in with **Lead Auditor** (`auditor@ledgerline.io`).
-2. Observe that `AUDITOR` sees system-wide accounts (including `SYS-CLEARING-001` offsetting customer balances so **Zero-Sum Net = $0.00**), while Deposit/Transfer/Create Account controls are completely hidden and blocked on the server (`403`).
+2. Observe that `AUDITOR` sees system-wide accounts (including `SYS-CLEARING-001` offsetting customer balances so **Zero-Sum Net = ₹0.00**), while Deposit/Transfer/Create Account controls are completely hidden and blocked on the server (`403`).
 3. Navigate to **Audit & Cryptographic Proof**:
    - Click **Run Cryptographic Audit** → confirms `SHA-256 Chain: INTACT`, `Debits == Credits`, and `100% MATCH` account reconciliation.
    - Switch between **Security Audit Events** (showing every `REFUSED` and `BLOCKED` attempt from Minute 2) and **SHA-256 Hash Chain**.
@@ -53,3 +53,4 @@ This walkthrough demonstrates LedgerLine's double-entry accounting, server-side 
 2. Navigate to **Accounts**:
    - Demonstrate **Freeze** on an account and **Overdraft** configuration with documented justification.
 3. Wrap up by running `npm test` and `npm run verify` in the terminal to show all **13 automated tests across 5 suites passing** with zero discrepancies.
+

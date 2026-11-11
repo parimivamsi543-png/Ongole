@@ -174,3 +174,4 @@ describe('Role-Based Access Control (RBAC) & Account Ownership Isolation', () =>
     assert.match(frozenData.reason, /SOURCE_ACCOUNT_INACTIVE/);
   });
 });
+

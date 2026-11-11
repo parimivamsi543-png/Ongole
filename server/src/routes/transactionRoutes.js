@@ -22,3 +22,4 @@ router.post('/withdraw', requireRole(ROLES.ADMIN, ROLES.ACCOUNT_HOLDER), handleI
 router.post('/transfer', requireRole(ROLES.ADMIN, ROLES.ACCOUNT_HOLDER), handleIdempotency, transfer);
 
 module.exports = router;
+

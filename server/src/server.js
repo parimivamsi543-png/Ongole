@@ -32,7 +32,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL || true : true,
     methods: ['GET', 'POST', 'PATCH', 'OPTIONS'],
     exposedHeaders: ['Idempotent-Replay', 'X-Idempotency-Key'],
   })
@@ -126,10 +126,11 @@ const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
   connectDB().then(() => {
-    app.listen(PORT, () => {
-      console.log(`[LedgerLine] Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`[LedgerLine] Server running in ${process.env.NODE_ENV || 'development'} mode on http://localhost:${PORT}`);
     });
   });
 }
 
 module.exports = { app };
+

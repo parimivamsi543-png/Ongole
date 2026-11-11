@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ArrowDownLeft, ArrowUpRight, ArrowLeftRight, KeyRound, RefreshCw, ShieldCheck } from 'lucide-react';
 import { api, generateIdempotencyKey } from '../services/api';
+import { formatINR } from '../utils/formatCurrency';
 
 export const TransactionModal = ({
   isOpen,
@@ -52,7 +53,7 @@ export const TransactionModal = ({
     try {
       const numericAmount = parseFloat(amount);
       if (!numericAmount || numericAmount <= 0) {
-        addToast('error', 'Invalid Amount', 'Please enter an amount greater than $0.00.');
+        addToast('error', 'Invalid Amount', 'Please enter an amount greater than ₹0.00.');
         setSubmitting(false);
         return;
       }
@@ -166,7 +167,7 @@ export const TransactionModal = ({
                 <option value="">Select source account...</option>
                 {customerAccounts.map((acc) => (
                   <option key={acc._id} value={acc._id}>
-                    {acc.accountNumber} — {acc.name} (${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })})
+                    {acc.accountNumber} — {acc.name} ({formatINR(acc.balance)})
                   </option>
                 ))}
               </select>
@@ -189,7 +190,7 @@ export const TransactionModal = ({
                 {(mode === 'DEPOSIT' ? customerAccounts : recipientOptions).map((acc) => (
                   <option key={acc._id} value={acc._id}>
                     {acc.accountNumber} — {acc.name}
-                    {acc.balance !== undefined ? ` ($${acc.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })})` : ''}
+                    {acc.balance !== undefined ? ` (${formatINR(acc.balance)})` : ''}
                   </option>
                 ))}
               </select>
@@ -200,7 +201,7 @@ export const TransactionModal = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                Amount (USD)
+                Amount (INR ₹)
               </label>
               <input
                 type="number"
@@ -291,3 +292,4 @@ export const TransactionModal = ({
     </div>
   );
 };
+

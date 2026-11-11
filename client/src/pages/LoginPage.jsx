@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Landmark, ShieldCheck, Lock, Zap, ArrowRight, UserCheck, Eye, Shield } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Landmark, ShieldCheck, Lock, Zap, ArrowRight, UserCheck, Eye, Shield, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 
 const DEMO_ACCOUNTS = [
   {
@@ -17,7 +18,7 @@ const DEMO_ACCOUNTS = [
     role: 'ACCOUNT_HOLDER',
     email: 'sarah.smith@ledgerline.io',
     password: 'Holder@123456',
-    desc: 'Commercial Reserve ($500 authorized overdraft) & Checking',
+    desc: 'Commercial Reserve (₹500 authorized overdraft) & Checking',
     color: 'border-accent-cyan/40 bg-accent-cyan/10 hover:border-cyan-400 text-cyan-300',
     Icon: UserCheck,
   },
@@ -48,10 +49,26 @@ export const LoginPage = ({ addToast }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [apiStatus, setApiStatus] = useState({ checked: false, ok: false, label: 'Checking API...' });
+
+  useEffect(() => {
+    api
+      .health()
+      .then(() => setApiStatus({ checked: true, ok: true, label: 'API & MongoDB Atlas Online' }))
+      .catch(() =>
+        setApiStatus({
+          checked: true,
+          ok: false,
+          label: 'Backend API Offline — start server via "npm start" or "npm run dev"',
+        })
+      );
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setFormError('');
     try {
       if (isRegister) {
         await register({ fullName, email, password });
@@ -61,6 +78,7 @@ export const LoginPage = ({ addToast }) => {
         addToast('success', 'Authenticated', 'Secure session established.');
       }
     } catch (err) {
+      setFormError(err.message);
       addToast('error', 'Authentication Failed', err.message);
     } finally {
       setLoading(false);
@@ -71,11 +89,13 @@ export const LoginPage = ({ addToast }) => {
     setEmail(demo.email);
     setPassword(demo.password);
     setIsRegister(false);
+    setFormError('');
     setLoading(true);
     try {
       await login(demo.email, demo.password);
       addToast('success', `Signed in as ${demo.role}`, demo.email);
     } catch (err) {
+      setFormError(err.message);
       addToast('error', 'Quick Login Failed', err.message);
     } finally {
       setLoading(false);
@@ -166,6 +186,30 @@ export const LoginPage = ({ addToast }) => {
               </div>
             </div>
 
+            {apiStatus.checked && (
+              <div
+                className={`mb-4 px-3 py-2 rounded-xl border text-xs flex items-center gap-2 ${
+                  apiStatus.ok
+                    ? 'bg-brand-500/10 border-brand-500/30 text-brand-300'
+                    : 'bg-rose-500/15 border-rose-500/40 text-rose-200'
+                }`}
+              >
+                {apiStatus.ok ? (
+                  <CheckCircle2 className="w-4 h-4 shrink-0 text-brand-400" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+                )}
+                <span>{apiStatus.label}</span>
+              </div>
+            )}
+
+            {formError && (
+              <div className="mb-4 px-3.5 py-2.5 rounded-xl bg-rose-500/15 border border-rose-500/40 text-xs text-rose-200 flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
+                <span>{formError}</span>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {isRegister && (
                 <div>
@@ -233,3 +277,4 @@ export const LoginPage = ({ addToast }) => {
     </div>
   );
 };
+

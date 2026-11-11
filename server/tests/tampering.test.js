@@ -102,3 +102,4 @@ describe('Append-Only Ledger & Cryptographic Tamper Detection', () => {
     assert.ok(compromised.discrepancies.some((d) => d.type === 'RECORD_TAMPERED'));
   });
 });
+
