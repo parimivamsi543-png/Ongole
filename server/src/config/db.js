@@ -15,7 +15,12 @@ const connectDB = async () => {
       minPoolSize: 5,
       family: 4,
       serverSelectionTimeoutMS: 20000,
+      connectTimeoutMS: 20000,
       socketTimeoutMS: 45000,
+      heartbeatFrequencyMS: 10000,
+      maxIdleTimeMS: 60000,
+      retryReads: true,
+      retryWrites: true,
     });
 
     console.log(`[LedgerLine] Connected to MongoDB Atlas: ${conn.connection.host}`);

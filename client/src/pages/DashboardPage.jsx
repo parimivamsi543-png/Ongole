@@ -38,15 +38,18 @@ export const DashboardPage = ({
   const fetchDashboard = useCallback(async () => {
     setLoading(true);
     try {
-      const [accRes, txRes] = await Promise.all([
+      const requests = [
         isPrivileged ? api.accounts.getAll() : api.accounts.getMy(),
         api.transactions.list({ limit: 8 }),
-      ]);
+      ];
+      if (isPrivileged) {
+        requests.push(api.audit.getIntegrity());
+      }
+
+      const [accRes, txRes, intRes] = await Promise.all(requests);
       setAccounts(accRes.data.accounts || []);
       setTransactions(txRes.data.transactions || []);
-
-      if (isPrivileged) {
-        const intRes = await api.audit.getIntegrity();
+      if (intRes) {
         setIntegrity(intRes.data.integrity);
       }
     } catch (err) {

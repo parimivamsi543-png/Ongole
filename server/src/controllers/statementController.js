@@ -35,11 +35,15 @@ const generateAccountStatement = async (req, res) => {
       ...dateFilter,
     };
 
-    const transactions = await Transaction.find(txQuery)
-      .populate('sourceAccountId', 'accountNumber name')
-      .populate('destinationAccountId', 'accountNumber name')
-      .populate('actorId', 'fullName email role')
-      .sort({ createdAt: 1 }); // chronological order for statement
+    const [transactions, ledgerEntries] = await Promise.all([
+      Transaction.find(txQuery)
+        .populate('sourceAccountId', 'accountNumber name')
+        .populate('destinationAccountId', 'accountNumber name')
+        .populate('actorId', 'fullName email role')
+        .sort({ createdAt: 1 })
+        .lean(),
+      LedgerEntry.find({ accountId: account._id }).lean(),
+    ]);
 
     // Map through transactions and reconstruct running balances
     let totalInflow = 0;
@@ -47,8 +51,6 @@ const generateAccountStatement = async (req, res) => {
     let successfulCount = 0;
     let failedCount = 0;
 
-    // Get all ledger entries for this account to get exact recorded balanceAfter
-    const ledgerEntries = await LedgerEntry.find({ accountId: account._id });
     const ledgerMap = new Map();
     for (const entry of ledgerEntries) {
       ledgerMap.set(entry.transactionId.toString(), entry);

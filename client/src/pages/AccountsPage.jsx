@@ -46,11 +46,13 @@ export const AccountsPage = ({
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const accRes = isPrivileged ? await api.accounts.getAll() : await api.accounts.getMy();
-      setAccounts(accRes.data.accounts || []);
-
+      const requests = [isPrivileged ? api.accounts.getAll() : api.accounts.getMy()];
       if (isAdmin) {
-        const usersRes = await api.accounts.getUsers();
+        requests.push(api.accounts.getUsers());
+      }
+      const [accRes, usersRes] = await Promise.all(requests);
+      setAccounts(accRes.data.accounts || []);
+      if (usersRes) {
         setUsers(usersRes.data.users || []);
       }
     } catch (err) {
@@ -78,7 +80,6 @@ export const AccountsPage = ({
       setShowCreateModal(false);
       setName('');
       setOverdraftLimit('0');
-      loadData();
       onAccountUpdated();
     } catch (err) {
       addToast('error', 'Failed to Create Account', err.message);
@@ -91,7 +92,6 @@ export const AccountsPage = ({
     try {
       await api.accounts.updateStatus(accountId, newStatus);
       addToast('info', 'Account Status Changed', `Account updated to ${newStatus}`);
-      loadData();
       onAccountUpdated();
     } catch (err) {
       addToast('error', 'Status Update Rejected', err.message);
@@ -109,7 +109,6 @@ export const AccountsPage = ({
       );
       addToast('success', 'Overdraft Facility Updated', `Authorized limit updated to ${formatINR(newOverdraftValue)}`);
       setOverdraftTarget(null);
-      loadData();
       onAccountUpdated();
     } catch (err) {
       addToast('error', 'Overdraft Update Failed', err.message);

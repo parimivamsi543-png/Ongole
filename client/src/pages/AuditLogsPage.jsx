@@ -46,8 +46,13 @@ export const AuditLogsPage = ({ addToast }) => {
   const handleRunIntegrityAudit = async () => {
     setVerifying(true);
     try {
-      const { data } = await api.audit.getIntegrity();
+      const [intRes, logsRes] = await Promise.all([
+        api.audit.getIntegrity(),
+        api.audit.getLogs({ limit: 80, ...(outcomeFilter ? { outcome: outcomeFilter } : {}) }),
+      ]);
+      const data = intRes.data;
       setIntegrity(data.integrity);
+      setLogs(logsRes.data.logs || []);
       if (data.integrity.isMathematicallySound) {
         addToast(
           'success',
@@ -57,7 +62,6 @@ export const AuditLogsPage = ({ addToast }) => {
       } else {
         addToast('error', 'INTEGRITY VIOLATION DETECTED', `${data.integrity.discrepancies.length} discrepancy(s) found!`);
       }
-      loadAuditData();
     } catch (err) {
       addToast('error', 'Verification Error', err.message);
     } finally {

@@ -51,7 +51,7 @@ const login = async (req, res) => {
 
     const token = generateToken(user);
 
-    await logAudit({
+    logAudit({
       actorId: user._id,
       actorEmail: user.email,
       actorRole: user.role,

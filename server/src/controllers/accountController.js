@@ -6,7 +6,7 @@ const { logAudit } = require('../services/auditService');
 // Get accounts owned by currently authenticated user
 const getMyAccounts = async (req, res) => {
   try {
-    const accounts = await Account.find({ ownerId: req.user._id }).sort({ createdAt: -1 });
+    const accounts = await Account.find({ ownerId: req.user._id }).sort({ createdAt: -1 }).lean();
     res.json({
       success: true,
       count: accounts.length,
@@ -22,7 +22,8 @@ const getAllAccounts = async (req, res) => {
   try {
     const accounts = await Account.find()
       .populate('ownerId', 'fullName email role')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.json({
       success: true,
@@ -37,7 +38,7 @@ const getAllAccounts = async (req, res) => {
 // Get single account by ID (ownership checked via middleware)
 const getAccountById = async (req, res) => {
   try {
-    const account = await Account.findById(req.params.id).populate('ownerId', 'fullName email role');
+    const account = await Account.findById(req.params.id).populate('ownerId', 'fullName email role').lean();
     if (!account) {
       return res.status(404).json({ success: false, error: 'Account not found' });
     }
@@ -62,7 +63,11 @@ const createAccount = async (req, res) => {
       targetOwnerId = req.user._id;
     }
 
-    const owner = await User.findById(targetOwnerId);
+    const owner =
+      targetOwnerId.toString() === req.user._id.toString()
+        ? req.user
+        : await User.findById(targetOwnerId).select('_id fullName email').lean();
+
     if (!owner) {
       return res.status(404).json({ success: false, error: 'Target owner user not found.' });
     }
@@ -84,7 +89,7 @@ const createAccount = async (req, res) => {
       status: ACCOUNT_STATUS.ACTIVE,
     });
 
-    await logAudit({
+    logAudit({
       actorId: req.user._id,
       actorEmail: req.user.email,
       actorRole: req.user.role,
@@ -155,7 +160,8 @@ const getTransferDirectory = async (req, res) => {
     const accounts = await Account.find({ isSystem: false, status: ACCOUNT_STATUS.ACTIVE })
       .select('_id accountNumber name accountType ownerId')
       .populate('ownerId', 'fullName email')
-      .sort({ accountNumber: 1 });
+      .sort({ accountNumber: 1 })
+      .lean();
 
     res.json({
       success: true,
@@ -169,7 +175,7 @@ const getTransferDirectory = async (req, res) => {
 // Admin: List all users for account oversight
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    const users = await User.find().select('-password').sort({ createdAt: -1 }).lean();
     res.json({
       success: true,
       count: users.length,

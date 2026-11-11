@@ -261,7 +261,7 @@ const getAllTransactions = async (req, res) => {
 
     // Scoped for ACCOUNT_HOLDER: only transactions touching user's accounts
     if (req.user.role === ROLES.ACCOUNT_HOLDER) {
-      const userAccounts = await Account.find({ ownerId: req.user._id }).select('_id');
+      const userAccounts = await Account.find({ ownerId: req.user._id }).select('_id').lean();
       const accountIds = userAccounts.map((a) => a._id);
 
       query.$or = [{ sourceAccountId: { $in: accountIds } }, { destinationAccountId: { $in: accountIds } }];
@@ -275,7 +275,8 @@ const getAllTransactions = async (req, res) => {
         .populate('actorId', 'fullName email role')
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(Number(limit)),
+        .limit(Number(limit))
+        .lean(),
       Transaction.countDocuments(query),
     ]);
 

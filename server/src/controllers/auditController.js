@@ -13,7 +13,7 @@ const getAuditLogs = async (req, res) => {
 
     const skip = (Number(page) - 1) * Number(limit);
     const [logs, total] = await Promise.all([
-      AuditLog.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+      AuditLog.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)).lean(),
       AuditLog.countDocuments(query),
     ]);
 
@@ -53,7 +53,8 @@ const getLedgerEntries = async (req, res) => {
         .populate('transactionId', 'transactionId type status description')
         .sort({ sequenceNumber: -1 })
         .skip(skip)
-        .limit(Number(limit)),
+        .limit(Number(limit))
+        .lean(),
       LedgerEntry.countDocuments(),
     ]);
 

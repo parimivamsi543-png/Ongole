@@ -28,6 +28,16 @@ const request = async (path, options = {}) => {
   const isReplay = res.headers.get('idempotent-replay') === 'true';
 
   if (!res.ok) {
+    if (
+      res.status === 401 &&
+      !path.startsWith('/auth/login') &&
+      !path.startsWith('/auth/register') &&
+      typeof window !== 'undefined'
+    ) {
+      localStorage.removeItem('ledgerline_token');
+      window.dispatchEvent(new CustomEvent('ledgerline:unauthorized', { detail: data.message }));
+    }
+
     const fallback =
       res.status >= 500 && Object.keys(data).length === 0
         ? `API server unreachable on port 5000 (HTTP ${res.status}). Run "npm start" or "npm run dev".`

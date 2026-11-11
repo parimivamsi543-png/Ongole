@@ -22,17 +22,34 @@ const verifySystemIntegrity = async (actor = null) => {
     discrepancies: [],
   };
 
-  // 1. Fetch all ledger entries sorted by sequenceNumber
-  const entries = await LedgerEntry.find().sort({ sequenceNumber: 1 });
+  // 1. Fetch ledger entries, posted transactions, and accounts in parallel (eliminates N+1 queries)
+  const [entries, transactions, accounts] = await Promise.all([
+    LedgerEntry.find().sort({ sequenceNumber: 1 }).lean(),
+    Transaction.find({ status: TRANSACTION_STATUS.POSTED }).lean(),
+    Account.find().lean(),
+  ]);
   result.totalLedgerEntries = entries.length;
+  result.totalTransactions = transactions.length;
 
   let totalDebits = 0;
   let totalCredits = 0;
   let expectedPrevHash = '0000000000000000000000000000000000000000000000000000000000000000';
   const computedAccountBalances = {};
+  const entriesByTxId = new Map();
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
+
+    // Group entries by transactionId in memory for O(1) per-transaction check
+    const txKey = entry.transactionId ? entry.transactionId.toString() : '';
+    if (txKey) {
+      let list = entriesByTxId.get(txKey);
+      if (!list) {
+        list = [];
+        entriesByTxId.set(txKey, list);
+      }
+      list.push(entry);
+    }
 
     // Cryptographic Chain Validation
     if (entry.previousHash !== expectedPrevHash) {
@@ -104,12 +121,9 @@ const verifySystemIntegrity = async (actor = null) => {
     });
   }
 
-  // Invariant 2: Per-Transaction Double-Entry Balance
-  const transactions = await Transaction.find({ status: TRANSACTION_STATUS.POSTED });
-  result.totalTransactions = transactions.length;
-
+  // Invariant 2: Per-Transaction Double-Entry Balance (O(1) in-memory map lookup)
   for (const tx of transactions) {
-    const txEntries = await LedgerEntry.find({ transactionId: tx._id });
+    const txEntries = entriesByTxId.get(tx._id.toString()) || [];
     let txDebit = 0;
     let txCredit = 0;
 
@@ -134,7 +148,6 @@ const verifySystemIntegrity = async (actor = null) => {
   }
 
   // Invariant 3: Reconcile current Account balances with Ledger recomputation
-  const accounts = await Account.find();
   for (const acc of accounts) {
     const expected = computedAccountBalances[acc._id.toString()] || 0;
     const actual = acc.balance;

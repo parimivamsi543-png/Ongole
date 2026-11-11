@@ -28,6 +28,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadUser();
+    const handleUnauthorized = () => {
+      localStorage.removeItem('ledgerline_token');
+      setUser(null);
+    };
+    window.addEventListener('ledgerline:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('ledgerline:unauthorized', handleUnauthorized);
   }, [loadUser]);
 
   const login = async (email, password) => {
